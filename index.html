@@ -219,47 +219,72 @@
         </div>
     </div>
 
-    <!-- Generic Alert Modal (Replaces browser alert) - FIXED Z-INDEX -->
-    <div id="alert-modal" class="hidden fixed inset-0 z-[110] items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
-        <div class="bg-gray-900 border border-[#BF953F] shadow-[0_0_20px_rgba(191,149,63,0.2)] rounded-xl p-6 max-w-sm w-full text-center">
-            <h3 class="text-[#FCF6BA] font-bold text-xl mb-4">הודעת מערכת</h3>
+    <!-- Generic Alert Modal (Replaces browser alert) -->
+    <div id="alert-modal" class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/80 p-4">
+        <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-sm w-full text-center">
             <p id="alert-message" class="text-white text-lg mb-6"></p>
-            <button onclick="closeModal('alert-modal')" class="gold-bg text-black font-bold py-2 px-8 rounded-lg w-full">סגור</button>
+            <button onclick="closeModal('alert-modal')" class="gold-bg text-black font-bold py-2 px-8 rounded-lg">הבנתי</button>
+        </div>
+    </div>
+
+    <!-- Bartender Claim Modal (NEW) -->
+    <div id="bartender-claim-modal" class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/90 backdrop-blur-md p-4">
+        <div class="glass-panel rounded-2xl p-8 max-w-sm w-full border-2 border-[#BF953F]">
+            <h3 class="text-2xl font-bold text-white mb-2 text-center">אישור צוות בר</h3>
+            <p class="text-gray-400 text-sm text-center mb-6">הזן קוד ברמן לאישור מתן הפרס (קוד: 5555)</p>
+            <input type="password" id="bartender-pin" class="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-center text-2xl text-white mb-6 focus:outline-none focus:border-[#BF953F] tracking-widest" placeholder="****">
+            <div class="flex space-x-3 space-x-reverse">
+                <button onclick="confirmClaim()" class="flex-1 gold-bg text-black font-extrabold py-3 rounded-lg shadow-[0_0_15px_rgba(191,149,63,0.3)]">אשר מסירה</button>
+                <button onclick="closeModal('bartender-claim-modal')" class="flex-1 bg-gray-800 text-white font-bold py-3 rounded-lg hover:bg-gray-700 transition">ביטול</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         // Firebase Imports (v11.6.1 ES Modules)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration (From User Input)
-        const firebaseConfig = {
-            apiKey: "AIzaSyAI5afkXTnjJHZrgvCZHFDKHi-IMpABMWQ",
-            authDomain: "scratch-db463.firebaseapp.com",
-            projectId: "scratch-db463",
-            storageBucket: "scratch-db463.firebasestorage.app",
-            messagingSenderId: "271029079626",
-            appId: "1:271029079626:web:a7e27c2989c2baab89a0b3",
-            measurementId: "G-HTCR679ZFN"
-        };
+        // Handle environment config or use user's provided config
+        let firebaseConfig;
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                firebaseConfig = JSON.parse(__firebase_config);
+            } else {
+                throw new Error("Env config missing");
+            }
+        } catch (error) {
+            // Fallback to the configuration provided in the prompt
+            firebaseConfig = {
+                apiKey: "AIzaSyAI5afkXTnjJHZrgvCZHFDKHi-IMpABMWQ",
+                authDomain: "scratch-db463.firebaseapp.com",
+                projectId: "scratch-db463",
+                storageBucket: "scratch-db463.firebasestorage.app",
+                messagingSenderId: "271029079626",
+                appId: "1:271029079626:web:a7e27c2989c2baab89a0b3",
+                measurementId: "G-HTCR679ZFN"
+            };
+        }
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         
+        // Strict Path Management per system rules
+        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'diamond-ball-vip-v1';
         let currentUserId = null;
 
-        // DB References 
-        const PRIZES_COLLECTION = collection(db, 'prizes');
-        const WINS_COLLECTION = collection(db, 'wins');
+        // DB References (Public data for the app ecosystem)
+        const PRIZES_COLLECTION = collection(db, 'artifacts', APP_ID, 'public', 'data', 'prizes');
+        const WINS_COLLECTION = collection(db, 'artifacts', APP_ID, 'public', 'data', 'wins');
 
         // State variables
         let availablePrizes = [];
         let allocatedPrizeForUser = null;
         let isDrawing = false;
         let isRevealed = false;
+        let currentWinDocId = null; // משתנה חדש לשמירת ה-ID של הזכייה הנוכחית
         
         // Canvas setup
         const canvas = document.getElementById('scratch-canvas');
@@ -272,7 +297,7 @@
         // ==========================================
         async function initApp() {
             try {
-                // Try to authenticate silently
+                // Rule 3: Auth Before Queries
                 const userCredential = await signInAnonymously(auth);
                 currentUserId = userCredential.user.uid;
                 
@@ -293,24 +318,14 @@
 
             } catch (error) {
                 console.error("Initialization error:", error);
-                // FIX: Hide loading screen so user can see the alert!
-                document.getElementById('loading-screen').style.display = 'none';
-                
-                // Format a friendly error message based on common Firebase issues
-                let errorMsg = error.message;
-                if (error.code === 'auth/operation-not-allowed') {
-                    errorMsg = "התחברות אנונימית אינה מופעלת בפרויקט ה-Firebase שלך. פנה ל-Authentication -> Sign-in Method והפעל אותה.";
-                } else if (error.code === 'permission-denied') {
-                    errorMsg = "אין הרשאות גישה למסד הנתונים. ודא שהעתקת את ה-Rules (חוקים) המעודכנים ב-Firestore.";
-                }
-                
-                showAlert("שגיאת מערכת: " + errorMsg);
+                showAlert("שגיאה בהתחברות למערכת. נסה לרענן.");
             }
         }
 
         // ==========================================
         // DATABASE LOGIC (Prizes & Inventory)
         // ==========================================
+        // Default prize configuration that the admin can reset to
         const defaultPrizes = [
             { id: "grand", name: "ארוחת ערב זוגית", initialQty: 2, remaining: 2, type: "VIP" },
             { id: "champagne", name: "בקבוק שמפניה מובחר", initialQty: 3, remaining: 3, type: "VIP" },
@@ -324,11 +339,12 @@
         ];
 
         async function checkAndSeedDatabase() {
+            // Rule 2: No Complex Queries. Fetch all and check length in memory.
             const snapshot = await getDocs(PRIZES_COLLECTION);
             if (snapshot.empty) {
                 console.log("Database empty. Seeding default prizes...");
                 for (const prize of defaultPrizes) {
-                    const docRef = doc(db, 'prizes', prize.id);
+                    const docRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', prize.id);
                     await setDoc(docRef, prize);
                 }
             }
@@ -374,7 +390,7 @@
 
             try {
                 // 1. Deduct from inventory
-                const prizeRef = doc(db, 'prizes', allocatedPrizeForUser.id);
+                const prizeRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', allocatedPrizeForUser.id);
                 const prizeDoc = await getDoc(prizeRef);
                 
                 if (prizeDoc.exists() && prizeDoc.data().remaining > 0) {
@@ -383,14 +399,17 @@
                     });
                 }
 
-                // 2. Log the win
-                await addDoc(WINS_COLLECTION, {
+                // 2. Log the win (נשמור את המסמך כדי שנוכל לעדכן אותו אחר כך)
+                const docRef = await addDoc(WINS_COLLECTION, {
                     prizeName: allocatedPrizeForUser.name,
                     prizeId: allocatedPrizeForUser.id,
                     timestamp: Date.now(),
                     userId: currentUserId,
                     status: 'pending_claim'
                 });
+                
+                // שמירת המזהה של הזכייה בזיכרון של הדפדפן
+                currentWinDocId = docRef.id;
 
             } catch (error) {
                 console.error("Error processing win:", error);
@@ -526,20 +545,45 @@
         // Expose to window for HTML buttons
         window.claimPrize = function() {
             closeModal('win-modal');
-            showAlert("במערכת אמיתית, הברמן מזין קוד סודי כאן כדי לסמן שהפרס סופק ללקוח.");
-            
-            // Reset for next customer (in real life, maybe block them for 24h)
-            setTimeout(async () => {
-                const loading = document.getElementById('loading-screen');
-                loading.style.display = 'flex';
-                loading.style.opacity = '1';
-                loading.querySelector('p').innerText = "מכין כרטיס חדש...";
+            document.getElementById('bartender-claim-modal').classList.remove('hidden');
+            document.getElementById('bartender-claim-modal').classList.add('flex');
+            document.getElementById('bartender-pin').value = '';
+        };
+
+        // פונקציה חדשה לאישור הברמן מול מסד הנתונים
+        window.confirmClaim = async function() {
+            const pin = document.getElementById('bartender-pin').value;
+            if (pin === '5555') {
+                closeModal('bartender-claim-modal');
                 
-                await prepareScratchCard();
+                // עדכון הסטטוס במסד הנתונים ל- 'מומש'
+                if (currentWinDocId) {
+                    try {
+                        const winRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'wins', currentWinDocId);
+                        await updateDoc(winRef, { status: 'claimed' });
+                    } catch (e) {
+                        console.error("Error updating claim status:", e);
+                    }
+                }
+
+                showAlert("הפרס סופק בהצלחה! מכין כרטיס חדש...");
                 
-                loading.style.opacity = '0';
-                setTimeout(() => loading.style.display = 'none', 500);
-            }, 2000);
+                // איפוס ללקוח הבא
+                setTimeout(async () => {
+                    closeModal('alert-modal');
+                    const loading = document.getElementById('loading-screen');
+                    loading.style.display = 'flex';
+                    loading.style.opacity = '1';
+                    loading.querySelector('p').innerText = "מכין כרטיס חדש...";
+                    
+                    await prepareScratchCard();
+                    
+                    loading.style.opacity = '0';
+                    setTimeout(() => loading.style.display = 'none', 500);
+                }, 2000);
+            } else {
+                showAlert("קוד ברמן שגוי.");
+            }
         };
 
         // ==========================================
@@ -585,7 +629,7 @@
                 const wins = [];
                 snapshot.forEach(doc => wins.push({ id: doc.id, ...doc.data() }));
                 
-                // Sort by timestamp descending
+                // Sort by timestamp descending (Rule 2: sorting in memory)
                 wins.sort((a, b) => b.timestamp - a.timestamp);
 
                 if (wins.length === 0) {
@@ -598,12 +642,20 @@
                     const date = new Date(win.timestamp);
                     const timeString = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
                     
+                    // בונוס: תגית סטטוס שמראה למנהל אם הלקוח באמת מימש את הפרס
+                    const statusBadge = win.status === 'claimed' 
+                        ? '<span class="text-green-400 text-[10px] bg-green-900/30 px-1.5 py-0.5 rounded ml-2">מומש</span>'
+                        : '<span class="text-yellow-400 text-[10px] bg-yellow-900/30 px-1.5 py-0.5 rounded ml-2">ממתין לברמן</span>';
+                    
                     const div = document.createElement('div');
                     div.className = "bg-black/40 border border-gray-800 rounded-lg p-3 flex justify-between items-center";
                     div.innerHTML = `
                         <div class="flex flex-col">
-                            <span class="text-[#FCF6BA] font-bold text-sm">${win.prizeName}</span>
-                            <span class="text-gray-500 text-xs">לקוח אנונימי</span>
+                            <div class="flex items-center">
+                                <span class="text-[#FCF6BA] font-bold text-sm">${win.prizeName}</span>
+                                ${statusBadge}
+                            </div>
+                            <span class="text-gray-500 text-xs mt-1">לקוח אנונימי</span>
                         </div>
                         <span class="text-gray-400 text-xs">${timeString}</span>
                     `;
@@ -613,11 +665,10 @@
         }
 
         window.resetInventory = async function() {
-            // Using a custom modal later, but keeping confirm for admin actions as it's safe and standard
-            if (window.confirm("האם אתה בטוח שברצונך לאפס את כל המלאי בחזרה לברירת המחדל?")) {
+            if (confirm("האם אתה בטוח שברצונך לאפס את כל המלאי בחזרה לברירת המחדל?")) {
                 showAlert("מאפס מלאי...");
                 for (const prize of defaultPrizes) {
-                    const docRef = doc(db, 'prizes', prize.id);
+                    const docRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', prize.id);
                     await setDoc(docRef, prize); // Overwrites with default
                 }
                 showAlert("המלאי אופס בהצלחה!");
@@ -658,6 +709,9 @@
             document.getElementById('alert-modal').classList.remove('hidden');
             document.getElementById('alert-modal').classList.add('flex');
         };
+
+        // Overwrite standard alert/confirm to prevent iframe blocking errors
+        window.alert = window.showAlert;
 
         // Event Listeners for Canvas
         canvas.addEventListener('mousedown', handleScratchStart);
