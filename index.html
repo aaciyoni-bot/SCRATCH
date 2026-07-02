@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -219,15 +220,15 @@
         </div>
     </div>
 
-    <!-- Generic Alert Modal (Replaces browser alert) -->
-    <div id="alert-modal" class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/80 p-4">
+    <!-- Generic Alert Modal -->
+    <div id="alert-modal" class="hidden fixed inset-0 z-[110] items-center justify-center bg-black/80 p-4">
         <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-sm w-full text-center">
-            <p id="alert-message" class="text-white text-lg mb-6"></p>
+            <p id="alert-message" class="text-white text-lg mb-6 leading-relaxed" style="direction: ltr;"></p>
             <button onclick="closeModal('alert-modal')" class="gold-bg text-black font-bold py-2 px-8 rounded-lg">הבנתי</button>
         </div>
     </div>
 
-    <!-- Bartender Claim Modal (NEW) -->
+    <!-- Bartender Claim Modal -->
     <div id="bartender-claim-modal" class="hidden fixed inset-0 z-[60] items-center justify-center bg-black/90 backdrop-blur-md p-4">
         <div class="glass-panel rounded-2xl p-8 max-w-sm w-full border-2 border-[#BF953F]">
             <h3 class="text-2xl font-bold text-white mb-2 text-center">אישור צוות בר</h3>
@@ -243,8 +244,8 @@
     <script type="module">
         // Firebase Imports (v11.6.1 ES Modules)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Handle environment config or use user's provided config
         const firebaseConfig = {
@@ -274,7 +275,7 @@
         let allocatedPrizeForUser = null;
         let isDrawing = false;
         let isRevealed = false;
-        let currentWinDocId = null; // משתנה לשמירת ה-ID של הזכייה הנוכחית
+        let currentWinDocId = null; 
         
         // Canvas setup
         const canvas = document.getElementById('scratch-canvas');
@@ -309,14 +310,14 @@
             } catch (error) {
                 console.error("Initialization error:", error);
                 document.getElementById('loading-screen').style.display = 'none';
-                showAlert("שגיאה בהתחברות למערכת. ודא שהתחברות אנונימית מופעלת ב-Firebase ורענן את הדף.");
+                // כאן התיקון: נציג את השגיאה המדויקת באנגלית כדי לדעת למה נחסמנו
+                showAlert("Firebase Error: " + error.message);
             }
         }
 
         // ==========================================
         // DATABASE LOGIC (Prizes & Inventory)
         // ==========================================
-        // Default prize configuration that the admin can reset to
         const defaultPrizes = [
             { id: "grand", name: "ארוחת ערב זוגית", initialQty: 2, remaining: 2, type: "VIP" },
             { id: "champagne", name: "בקבוק שמפניה מובחר", initialQty: 3, remaining: 3, type: "VIP" },
@@ -350,7 +351,6 @@
             snapshot.forEach(doc => {
                 const data = doc.data();
                 if (data.remaining > 0) {
-                    // Create an array representing probabilities based on remaining stock
                     for(let i=0; i<data.remaining; i++) {
                         allPrizes.push({ id: doc.id, ...data });
                     }
@@ -379,7 +379,6 @@
             if (allocatedPrizeForUser.id === 'none') return;
 
             try {
-                // 1. Deduct from inventory
                 const prizeRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', allocatedPrizeForUser.id);
                 const prizeDoc = await getDoc(prizeRef);
                 
@@ -389,7 +388,6 @@
                     });
                 }
 
-                // 2. Log the win
                 const docRef = await addDoc(WINS_COLLECTION, {
                     prizeName: allocatedPrizeForUser.name,
                     prizeId: allocatedPrizeForUser.id,
@@ -398,7 +396,6 @@
                     status: 'pending_claim'
                 });
                 
-                // שמירת המזהה של הזכייה בזיכרון של הדפדפן
                 currentWinDocId = docRef.id;
 
             } catch (error) {
@@ -416,7 +413,6 @@
         }
 
         function fillCanvas() {
-            // Gold Gradient Background
             const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
             gradient.addColorStop(0, '#BF953F');
             gradient.addColorStop(0.3, '#FCF6BA');
@@ -427,13 +423,11 @@
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Overlay texture pattern
             ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
             for(let i=0; i<canvas.width; i+=12) {
                 ctx.fillRect(i, 0, 2, canvas.height);
             }
 
-            // Text
             ctx.fillStyle = '#000000';
             ctx.font = '900 ' + (canvas.width > 250 ? '32px' : '24px') + ' Heebo';
             ctx.textAlign = 'center';
@@ -442,7 +436,7 @@
             ctx.shadowColor = "rgba(255, 255, 255, 0.6)";
             ctx.shadowBlur = 8;
             ctx.fillText('גרד כאן!', canvas.width / 2, canvas.height / 2);
-            ctx.shadowBlur = 0; // Reset
+            ctx.shadowBlur = 0;
         }
 
         function getMousePos(e) {
@@ -499,7 +493,6 @@
         function triggerWin() {
             isRevealed = true;
             
-            // Lock out interactions and fade out remaining canvas
             canvas.style.pointerEvents = 'none';
             canvas.style.transition = 'opacity 0.6s ease';
             canvas.style.opacity = '0';
@@ -513,10 +506,8 @@
                 });
             }
 
-            // Save to DB
             processWin();
 
-            // Show UI Modal
             setTimeout(() => {
                 document.getElementById('win-prize-text').innerText = allocatedPrizeForUser.name;
                 const modal = document.getElementById('win-modal');
@@ -524,7 +515,6 @@
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
                 
-                // Animation pop
                 setTimeout(() => {
                     content.classList.remove('scale-95');
                     content.classList.add('scale-100');
@@ -532,7 +522,6 @@
             }, 600);
         }
 
-        // Expose to window for HTML buttons
         window.claimPrize = function() {
             closeModal('win-modal');
             document.getElementById('bartender-claim-modal').classList.remove('hidden');
@@ -540,13 +529,11 @@
             document.getElementById('bartender-pin').value = '';
         };
 
-        // פונקציה לאישור הברמן מול מסד הנתונים
         window.confirmClaim = async function() {
             const pin = document.getElementById('bartender-pin').value;
             if (pin === '5555') {
                 closeModal('bartender-claim-modal');
                 
-                // עדכון הסטטוס במסד הנתונים ל- 'מומש'
                 if (currentWinDocId) {
                     try {
                         const winRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'wins', currentWinDocId);
@@ -558,7 +545,6 @@
 
                 showAlert("הפרס סופק בהצלחה! מכין כרטיס חדש...");
                 
-                // איפוס ללקוח הבא
                 setTimeout(async () => {
                     closeModal('alert-modal');
                     const loading = document.getElementById('loading-screen');
@@ -580,7 +566,6 @@
         // ADMIN DASHBOARD LOGIC
         // ==========================================
         function startAdminListeners() {
-            // 1. Listen to Inventory Changes
             onSnapshot(PRIZES_COLLECTION, (snapshot) => {
                 const tbody = document.getElementById('inventory-table-body');
                 tbody.innerHTML = '';
@@ -588,7 +573,6 @@
                 const items = [];
                 snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
                 
-                // Sort by initial quantity (rarest first usually)
                 items.sort((a, b) => a.initialQty - b.initialQty);
 
                 items.forEach(item => {
@@ -611,7 +595,6 @@
                 });
             }, (error) => console.error("Snapshot error:", error));
 
-            // 2. Listen to Recent Wins Feed
             onSnapshot(WINS_COLLECTION, (snapshot) => {
                 const feed = document.getElementById('wins-feed');
                 feed.innerHTML = '';
@@ -619,7 +602,6 @@
                 const wins = [];
                 snapshot.forEach(doc => wins.push({ id: doc.id, ...doc.data() }));
                 
-                // Sort by timestamp descending
                 wins.sort((a, b) => b.timestamp - a.timestamp);
 
                 if (wins.length === 0) {
@@ -627,12 +609,10 @@
                     return;
                 }
 
-                // Show top 20 recent
                 wins.slice(0, 20).forEach(win => {
                     const date = new Date(win.timestamp);
                     const timeString = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
                     
-                    // בונוס: תגית סטטוס שמראה למנהל אם הלקוח באמת מימש את הפרס
                     const statusBadge = win.status === 'claimed' 
                         ? '<span class="text-green-400 text-[10px] bg-green-900/30 px-1.5 py-0.5 rounded ml-2">מומש</span>'
                         : '<span class="text-yellow-400 text-[10px] bg-yellow-900/30 px-1.5 py-0.5 rounded ml-2">ממתין לברמן</span>';
@@ -659,7 +639,7 @@
                 showAlert("מאפס מלאי...");
                 for (const prize of defaultPrizes) {
                     const docRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', prize.id);
-                    await setDoc(docRef, prize); // Overwrites with default
+                    await setDoc(docRef, prize);
                 }
                 showAlert("המלאי אופס בהצלחה!");
             }
@@ -700,10 +680,8 @@
             document.getElementById('alert-modal').classList.add('flex');
         };
 
-        // Overwrite standard alert/confirm to prevent iframe blocking errors
         window.alert = window.showAlert;
 
-        // Event Listeners for Canvas
         canvas.addEventListener('mousedown', handleScratchStart);
         canvas.addEventListener('mousemove', scratch);
         canvas.addEventListener('mouseup', handleScratchEnd);
@@ -717,7 +695,6 @@
             if (!isRevealed) resizeCanvas();
         });
 
-        // Start everything
         window.onload = initApp;
     </script>
 </body>
