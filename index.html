@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -73,24 +74,24 @@
     <!-- Global Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="loader mb-4"></div>
-        <p class="text-[#FCF6BA] font-bold tracking-widest uppercase">מתחבר למערכת...</p>
+        <p id="loading-text" class="text-[#FCF6BA] font-bold tracking-widest uppercase">מתחבר למערכת...</p>
     </div>
 
     <!-- ========================================== -->
-    <!-- VIEW 1: WELCOME SCREEN (NEW)               -->
+    <!-- VIEW 1: WELCOME SCREEN                     -->
     <!-- ========================================== -->
     <div id="view-welcome" class="view-section active py-10 bg-[radial-gradient(circle_at_center,#1f1f2e_0%,#0a0a0a_100%)]">
         <header class="text-center mb-10 px-4 w-full max-w-md mx-auto pt-8">
             <h1 class="text-5xl font-black mb-2 tracking-wider">
                 DIAMOND<span class="gold-text">BALL</span>
             </h1>
-            <p class="text-gray-400 text-lg">מועדון הלקוחות האקסקלוסיבי</p>
+            <p class="text-gray-400 text-lg">מערכת כרטיסי מתנה וגירוד</p>
         </header>
 
         <main class="flex-grow flex flex-col items-center justify-center w-full px-6 max-w-sm mx-auto space-y-6">
             <button onclick="switchView('register')" class="w-full gold-bg text-black font-extrabold py-5 px-8 rounded-2xl shadow-[0_0_20px_rgba(191,149,63,0.3)] text-xl transform transition hover:scale-105">
-                הצטרף למועדון הלקוחות
-                <span class="block text-sm font-normal mt-1 text-gray-800">וקבל כרטיס גירוד מיידי!</span>
+                לקוח מזדמן
+                <span class="block text-sm font-normal mt-1 text-gray-800">הצטרף למועדון וקבל כרטיס גירוד!</span>
             </button>
             
             <div class="flex items-center w-full my-4">
@@ -100,8 +101,8 @@
             </div>
 
             <button onclick="switchView('vip')" class="w-full bg-gray-900 border border-[#BF953F] text-[#FCF6BA] font-bold py-4 px-8 rounded-2xl shadow-lg text-lg transform transition hover:bg-gray-800">
-                אני לקוח VIP קיים
-                <span class="block text-xs font-normal mt-1 text-gray-400">הזן טלפון לקבלת כרטיס מתנה</span>
+                חבר מועדון קיים
+                <span class="block text-xs font-normal mt-1 text-gray-400">הזן טלפון למשיכת כרטיס המתנה</span>
             </button>
         </main>
 
@@ -115,7 +116,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- VIEW 2: REGISTER CLUB (NEW)                -->
+    <!-- VIEW 2: REGISTER CLUB                      -->
     <!-- ========================================== -->
     <div id="view-register" class="view-section py-10 bg-[radial-gradient(circle_at_center,#1f1f2e_0%,#0a0a0a_100%)]">
         <div class="w-full max-w-sm mx-auto px-6 flex flex-col h-full">
@@ -124,7 +125,7 @@
                 חזור
             </button>
             
-            <h2 class="text-3xl font-black gold-text mb-2">הרשמה למועדון</h2>
+            <h2 class="text-3xl font-black gold-text mb-2">הצטרפות למועדון</h2>
             <p class="text-gray-400 mb-8 text-sm">מלא את הפרטים כדי לקבל גישה לכרטיסי הגירוד ולפרסים השווים שלנו.</p>
             
             <div class="space-y-4 flex-grow">
@@ -145,7 +146,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- VIEW 3: VIP LOGIN (NEW)                    -->
+    <!-- VIEW 3: VIP LOGIN                          -->
     <!-- ========================================== -->
     <div id="view-vip" class="view-section py-10 bg-[radial-gradient(circle_at_center,#1f1f2e_0%,#0a0a0a_100%)]">
         <div class="w-full max-w-sm mx-auto px-6 flex flex-col h-full">
@@ -154,7 +155,7 @@
                 חזור
             </button>
             
-            <h2 class="text-3xl font-black text-white mb-2">כניסת <span class="gold-text">VIP</span></h2>
+            <h2 class="text-3xl font-black text-white mb-2">כניסת <span class="gold-text">חבר מועדון</span></h2>
             <p class="text-gray-400 mb-8 text-sm">הזן את מספר הטלפון שלך כדי למשוך את כרטיס המתנה היומי שלך.</p>
             
             <div class="space-y-4 flex-grow">
@@ -177,7 +178,7 @@
         <header class="text-center mb-6 px-4 w-full max-w-md mx-auto">
             <div class="inline-block p-1 rounded-full gold-bg mb-4 shadow-[0_0_15px_rgba(191,149,63,0.4)]">
                 <div id="user-badge" class="bg-black text-[#FCF6BA] px-6 py-1 rounded-full text-sm font-bold tracking-widest uppercase">
-                    VIP Member
+                    CLUB MEMBER
                 </div>
             </div>
             <h1 class="text-5xl font-black mb-2 tracking-wider">
@@ -213,6 +214,14 @@
                 </div>
             </div>
         </main>
+
+        <footer class="mt-8 px-6 w-full text-center pb-4">
+            <button onclick="openAdminLogin()" class="opacity-30 hover:opacity-100 transition-opacity p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </button>
+        </footer>
     </div>
 
     <!-- ========================================== -->
@@ -231,7 +240,7 @@
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Live Feed Panel (Moved to left/primary spot for data focus) -->
+                <!-- Live Feed Panel -->
                 <div class="glass-panel rounded-2xl p-6 flex flex-col h-[550px]">
                     <h2 class="text-xl font-bold text-white mb-4">זכיות ונתוני לקוחות</h2>
                     <div id="wins-feed" class="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
@@ -299,11 +308,11 @@
         </div>
     </div>
 
-    <!-- Generic Alert Modal -->
+    <!-- Generic Alert Modal with Callback Support -->
     <div id="alert-modal" class="hidden fixed inset-0 z-[110] items-center justify-center bg-black/80 p-4">
-        <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-sm w-full text-center">
-            <p id="alert-message" class="text-white text-lg mb-6 leading-relaxed" style="direction: ltr;"></p>
-            <button onclick="closeModal('alert-modal')" class="gold-bg text-black font-bold py-2 px-8 rounded-lg">הבנתי</button>
+        <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-sm w-full text-center shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+            <p id="alert-message" class="text-white text-lg mb-6 leading-relaxed"></p>
+            <button onclick="closeAlertModal()" class="gold-bg text-black font-bold py-2 px-8 rounded-lg">הבנתי</button>
         </div>
     </div>
 
@@ -321,7 +330,6 @@
     </div>
 
     <script type="module">
-        // Firebase Imports (v11.6.1 ES Modules)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -344,6 +352,7 @@
 
         const PRIZES_COLLECTION = collection(db, 'artifacts', APP_ID, 'public', 'data', 'prizes');
         const WINS_COLLECTION = collection(db, 'artifacts', APP_ID, 'public', 'data', 'wins');
+        const CUSTOMERS_COLLECTION = collection(db, 'artifacts', APP_ID, 'public', 'data', 'customers');
 
         // State variables
         let allocatedPrizeForUser = null;
@@ -351,11 +360,10 @@
         let isRevealed = false;
         let currentWinDocId = null; 
         
-        // שמירת פרטי הלקוח שהזין בטופס
         let currentCustomer = {
             name: '',
             phone: '',
-            type: '' // 'מועדון' או 'VIP'
+            type: '' 
         };
         
         const canvas = document.getElementById('scratch-canvas');
@@ -387,48 +395,93 @@
         }
 
         // ==========================================
-        // FORM SUBMISSION LOGIC
+        // FORM SUBMISSION & CUSTOMER LOOKUP
         // ==========================================
         window.submitForm = async function(formType) {
+            let name = "";
+            let phone = "";
+            let type = "";
+
             if (formType === 'club') {
-                const name = document.getElementById('reg-name').value.trim();
-                const phone = document.getElementById('reg-phone').value.trim();
+                name = document.getElementById('reg-name').value.trim();
+                phone = document.getElementById('reg-phone').value.trim();
+                type = 'מזדמן/מועדון';
                 
                 if (!name || !phone) return showAlert("אנא מלא את כל השדות כדי להמשיך.");
                 if (phone.length < 9) return showAlert("מספר טלפון לא תקין.");
                 
-                currentCustomer = { name: name, phone: phone, type: 'מועדון' };
-                document.getElementById('welcome-name').innerText = `בהצלחה, ${name.split(' ')[0]}!`;
-                document.getElementById('user-badge').innerText = "CLUB MEMBER";
-                
             } else if (formType === 'vip') {
-                const phone = document.getElementById('vip-phone').value.trim();
+                phone = document.getElementById('vip-phone').value.trim();
+                name = 'לקוח קיים';
+                type = 'מועדון קיים';
                 
                 if (!phone) return showAlert("אנא הזן מספר טלפון כדי לאמת את החשבון.");
                 if (phone.length < 9) return showAlert("מספר טלפון לא תקין.");
-                
-                currentCustomer = { name: 'לקוח VIP', phone: phone, type: 'VIP' };
-                document.getElementById('welcome-name').innerText = `שמחים שחזרת אלינו!`;
-                document.getElementById('user-badge').innerText = "VIP MEMBER";
             }
 
-            // מציג מסך טעינה בזמן שמכין את הכרטיס
+            // מראה מסך טעינה לבדיקת הנתונים
             const loading = document.getElementById('loading-screen');
-            loading.querySelector('p').innerText = "מכין כרטיס אישי...";
+            document.getElementById('loading-text').innerText = "בודק נתונים במערכת...";
             loading.style.display = 'flex';
             loading.style.opacity = '1';
-            
-            await prepareScratchCard();
-            
-            // עובר למסך הגירוד
-            switchView('customer');
-            
-            loading.style.opacity = '0';
-            setTimeout(() => loading.style.display = 'none', 500);
+
+            try {
+                // בדיקה אם הלקוח קיים במסד הנתונים
+                const customerRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'customers', phone);
+                const customerDoc = await getDoc(customerRef);
+                
+                let messageToUser = "";
+                
+                if (customerDoc.exists()) {
+                    messageToUser = "הלקוח רשום במערכת.";
+                    // נעדכן את השם אם הזין שם חדש
+                    if (formType === 'club') {
+                        await updateDoc(customerRef, { name: name });
+                    } else {
+                        // אם זה לקוח קיים והתחבר רק עם טלפון, נמשוך את השם שלו מהמערכת
+                        name = customerDoc.data().name || name;
+                    }
+                } else {
+                    messageToUser = "הלקוח לא רשום במערכת. פרטיך נשמרים כעת.";
+                    // נרשום אותו למערכת כדי שבפעם הבאה יהיה קיים
+                    await setDoc(customerRef, { phone: phone, name: name, registeredAt: Date.now() });
+                }
+
+                currentCustomer = { name: name, phone: phone, type: type };
+                
+                document.getElementById('welcome-name').innerText = `בהצלחה, ${name.split(' ')[0]}!`;
+                document.getElementById('user-badge').innerText = type === 'מועדון קיים' ? "VIP MEMBER" : "CLUB MEMBER";
+
+                // מעלים את מסך הטעינה ומקפיץ את ההודעה הרצויה. 
+                // בלחיצה על "הבנתי" - הקולבק (Callback) מופעל ועוברים למסך הגירוד
+                loading.style.opacity = '0';
+                setTimeout(() => {
+                    loading.style.display = 'none';
+                    
+                    showAlert(messageToUser, async () => {
+                        const loading2 = document.getElementById('loading-screen');
+                        document.getElementById('loading-text').innerText = "מכין כרטיס גירוד אישי...";
+                        loading2.style.display = 'flex';
+                        loading2.style.opacity = '1';
+                        
+                        await prepareScratchCard();
+                        switchView('customer');
+                        
+                        loading2.style.opacity = '0';
+                        setTimeout(() => loading2.style.display = 'none', 500);
+                    });
+                }, 500);
+
+            } catch (err) {
+                console.error(err);
+                loading.style.opacity = '0';
+                setTimeout(() => loading.style.display = 'none', 500);
+                showAlert("שגיאה בבדיקת הלקוח: " + err.message);
+            }
         };
 
         // ==========================================
-        // DATABASE LOGIC (Prizes & Inventory)
+        // DATABASE LOGIC (Prizes)
         // ==========================================
         const defaultPrizes = [
             { id: "grand", name: "ארוחת ערב זוגית", initialQty: 2, remaining: 2, type: "VIP" },
@@ -436,12 +489,12 @@
             { id: "table", name: "שדרוג שולחן VIP", initialQty: 5, remaining: 5, type: "High" },
             { id: "entry", name: "כניסה חינם למסיבה", initialQty: 20, remaining: 20, type: "Medium" },
             { id: "burger", name: "המבורגר מתנה", initialQty: 15, remaining: 15, type: "Medium" },
-            { id: "game", name: "משחק שולחן (סנוקר/באולינג)", initialQty: 20, remaining: 20, type: "Medium" }, // פרס חדש
+            { id: "game", name: "משחק שולחן (סנוקר/באולינג)", initialQty: 20, remaining: 20, type: "Medium" },
             { id: "cocktail", name: "קוקטייל הבית מתנה", initialQty: 30, remaining: 30, type: "Medium" },
-            { id: "beer", name: "כוס בירה מהחבית", initialQty: 40, remaining: 40, type: "Normal" }, // פרס חדש
+            { id: "beer", name: "כוס בירה מהחבית", initialQty: 40, remaining: 40, type: "Normal" },
             { id: "chaser", name: "צ'ייסר הבית מתנה", initialQty: 50, remaining: 50, type: "Normal" },
             { id: "discount", name: "10% הנחה בחשבון", initialQty: 100, remaining: 100, type: "Normal" },
-            { id: "softdrink", name: "פחית שתייה קלה", initialQty: 100, remaining: 100, type: "Normal" }, // פרס חדש
+            { id: "softdrink", name: "פחית שתייה קלה", initialQty: 100, remaining: 100, type: "Normal" },
             { id: "energy", name: "פחית אקסל מתנה", initialQty: 150, remaining: 150, type: "Normal" }
         ];
 
@@ -483,7 +536,7 @@
             canvas.style.opacity = '1';
             canvas.style.pointerEvents = 'auto';
             canvas.style.transition = 'none';
-            resizeCanvas();
+            // הציור של הקנבס יקרה ברגע שהמסך יוצג בפועל כדי למנוע את באג הגירוד המיידי
         }
 
         async function processWin() {
@@ -499,7 +552,6 @@
                     });
                 }
 
-                // רישום הלקוח יחד עם הזכייה!
                 const docRef = await addDoc(WINS_COLLECTION, {
                     prizeName: allocatedPrizeForUser.name,
                     prizeId: allocatedPrizeForUser.id,
@@ -660,7 +712,6 @@
 
                 showAlert("הפרס סופק בהצלחה! תודה ששיחקת.");
                 
-                // חוזר למסך הבית הראשי במקום להכין כרטיס חדש ישר (כי זה לקוח חדש שצריך להירשם)
                 setTimeout(() => {
                     closeModal('alert-modal');
                     switchView('welcome');
@@ -729,11 +780,10 @@
                         ? '<span class="text-green-400 text-[10px] bg-green-900/30 px-1.5 py-0.5 rounded ml-2 border border-green-800">מומש</span>'
                         : '<span class="text-yellow-400 text-[10px] bg-yellow-900/30 px-1.5 py-0.5 rounded ml-2 border border-yellow-800">ממתין לברמן</span>';
                     
-                    const typeBadge = win.customerType === 'מועדון'
-                        ? '<span class="text-blue-400 text-[10px] bg-blue-900/30 px-1.5 py-0.5 rounded ml-1">מועדון</span>'
-                        : (win.customerType === 'VIP' ? '<span class="text-purple-400 text-[10px] bg-purple-900/30 px-1.5 py-0.5 rounded ml-1">VIP</span>' : '');
+                    const typeBadge = win.customerType === 'מזדמן/מועדון'
+                        ? '<span class="text-blue-400 text-[10px] bg-blue-900/30 px-1.5 py-0.5 rounded ml-1">חדש/מזדמן</span>'
+                        : (win.customerType === 'מועדון קיים' ? '<span class="text-purple-400 text-[10px] bg-purple-900/30 px-1.5 py-0.5 rounded ml-1">מועדון קיים</span>' : '');
 
-                    // מזהה לקוח מדויק
                     const customerDisplay = win.customerPhone ? `${win.customerName} (${win.customerPhone})` : 'לקוח אנונימי (ישן)';
 
                     const div = document.createElement('div');
@@ -768,12 +818,19 @@
         };
 
         // ==========================================
-        // UI HELPERS & EVENTS
+        // UI HELPERS & ALERT SYSTEM
         // ==========================================
+        let alertCallback = null;
+
         window.switchView = function(viewName) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + viewName).classList.add('active');
             window.scrollTo(0, 0);
+            
+            // הקנבס יצויר אך ורק כשהכרטיס מוצג על המסך כדי למנוע גירוד מוקדם
+            if (viewName === 'customer') {
+                setTimeout(resizeCanvas, 50);
+            }
         };
 
         window.openAdminLogin = function() {
@@ -787,17 +844,26 @@
             document.getElementById(id).classList.remove('flex');
         };
 
+        window.closeAlertModal = function() {
+            closeModal('alert-modal');
+            if (alertCallback) {
+                alertCallback();
+                alertCallback = null;
+            }
+        };
+
         window.verifyAdmin = function() {
             const pin = document.getElementById('admin-pin').value;
             if (pin === '1234') {
                 closeModal('admin-login-modal');
                 switchView('admin');
             } else {
-                showAlert("סיסמה שגויה גישה נדחתה.");
+                showAlert("סיסמה שגויה. גישה נדחתה.");
             }
         };
 
-        window.showAlert = function(msg) {
+        window.showAlert = function(msg, callback = null) {
+            alertCallback = callback;
             document.getElementById('alert-message').innerText = msg;
             document.getElementById('alert-modal').classList.remove('hidden');
             document.getElementById('alert-modal').classList.add('flex');
@@ -815,7 +881,9 @@
         canvas.addEventListener('touchend', handleScratchEnd);
 
         window.addEventListener('resize', () => {
-            if (!isRevealed && document.getElementById('view-customer').classList.contains('active')) resizeCanvas();
+            if (!isRevealed && document.getElementById('view-customer').classList.contains('active')) {
+                resizeCanvas();
+            }
         });
 
         window.onload = initApp;
