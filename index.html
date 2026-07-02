@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -44,17 +45,12 @@
             color: #000;
         }
 
-        .gold-border {
-            border-color: #BF953F;
-        }
-
         #scratch-container {
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
         }
 
-        /* Loading Spinner */
         .loader {
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-left-color: #BF953F;
@@ -66,7 +62,6 @@
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Glassmorphism for Admin */
         .glass-panel {
             background: rgba(30, 30, 40, 0.8);
             backdrop-filter: blur(12px);
@@ -83,19 +78,113 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- VIEW 1: CUSTOMER SCRATCH CARD              -->
+    <!-- VIEW 1: WELCOME SCREEN (NEW)               -->
     <!-- ========================================== -->
-    <div id="view-customer" class="view-section active py-10 bg-[radial-gradient(circle_at_center,#1f1f2e_0%,#0a0a0a_100%)]">
+    <div id="view-welcome" class="view-section active py-10 bg-[radial-gradient(circle_at_center,#1f1f2e_0%,#0a0a0a_100%)]">
+        <header class="text-center mb-10 px-4 w-full max-w-md mx-auto pt-8">
+            <h1 class="text-5xl font-black mb-2 tracking-wider">
+                DIAMOND<span class="gold-text">BALL</span>
+            </h1>
+            <p class="text-gray-400 text-lg">מועדון הלקוחות האקסקלוסיבי</p>
+        </header>
+
+        <main class="flex-grow flex flex-col items-center justify-center w-full px-6 max-w-sm mx-auto space-y-6">
+            <button onclick="switchView('register')" class="w-full gold-bg text-black font-extrabold py-5 px-8 rounded-2xl shadow-[0_0_20px_rgba(191,149,63,0.3)] text-xl transform transition hover:scale-105">
+                הצטרף למועדון הלקוחות
+                <span class="block text-sm font-normal mt-1 text-gray-800">וקבל כרטיס גירוד מיידי!</span>
+            </button>
+            
+            <div class="flex items-center w-full my-4">
+                <div class="flex-grow border-t border-gray-700"></div>
+                <span class="px-4 text-gray-500 text-sm">או</span>
+                <div class="flex-grow border-t border-gray-700"></div>
+            </div>
+
+            <button onclick="switchView('vip')" class="w-full bg-gray-900 border border-[#BF953F] text-[#FCF6BA] font-bold py-4 px-8 rounded-2xl shadow-lg text-lg transform transition hover:bg-gray-800">
+                אני לקוח VIP קיים
+                <span class="block text-xs font-normal mt-1 text-gray-400">הזן טלפון לקבלת כרטיס מתנה</span>
+            </button>
+        </main>
+
+        <footer class="mt-8 px-6 w-full text-center pb-4">
+            <button onclick="openAdminLogin()" class="opacity-30 hover:opacity-100 transition-opacity p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </button>
+        </footer>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: REGISTER CLUB (NEW)                -->
+    <!-- ========================================== -->
+    <div id="view-register" class="view-section py-10 bg-[radial-gradient(circle_at_center,#1f1f2e_0%,#0a0a0a_100%)]">
+        <div class="w-full max-w-sm mx-auto px-6 flex flex-col h-full">
+            <button onclick="switchView('welcome')" class="text-gray-400 hover:text-white flex items-center mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                חזור
+            </button>
+            
+            <h2 class="text-3xl font-black gold-text mb-2">הרשמה למועדון</h2>
+            <p class="text-gray-400 mb-8 text-sm">מלא את הפרטים כדי לקבל גישה לכרטיסי הגירוד ולפרסים השווים שלנו.</p>
+            
+            <div class="space-y-4 flex-grow">
+                <div>
+                    <label class="block text-gray-400 text-xs mb-1 ml-1">שם מלא</label>
+                    <input type="text" id="reg-name" placeholder="ישראל ישראלי" class="w-full bg-black border border-gray-700 rounded-xl px-4 py-4 text-white focus:border-[#BF953F] focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-xs mb-1 ml-1">מספר טלפון נייד</label>
+                    <input type="tel" id="reg-phone" placeholder="05X-XXXXXXX" class="w-full bg-black border border-gray-700 rounded-xl px-4 py-4 text-white focus:border-[#BF953F] focus:outline-none transition">
+                </div>
+            </div>
+            
+            <button onclick="submitForm('club')" class="w-full gold-bg text-black font-extrabold py-4 rounded-xl mt-8 shadow-[0_0_15px_rgba(191,149,63,0.3)] text-lg">
+                המשך לגירוד!
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: VIP LOGIN (NEW)                    -->
+    <!-- ========================================== -->
+    <div id="view-vip" class="view-section py-10 bg-[radial-gradient(circle_at_center,#1f1f2e_0%,#0a0a0a_100%)]">
+        <div class="w-full max-w-sm mx-auto px-6 flex flex-col h-full">
+            <button onclick="switchView('welcome')" class="text-gray-400 hover:text-white flex items-center mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                חזור
+            </button>
+            
+            <h2 class="text-3xl font-black text-white mb-2">כניסת <span class="gold-text">VIP</span></h2>
+            <p class="text-gray-400 mb-8 text-sm">הזן את מספר הטלפון שלך כדי למשוך את כרטיס המתנה היומי שלך.</p>
+            
+            <div class="space-y-4 flex-grow">
+                <div>
+                    <label class="block text-gray-400 text-xs mb-1 ml-1">מספר טלפון נייד</label>
+                    <input type="tel" id="vip-phone" placeholder="05X-XXXXXXX" class="w-full bg-black border border-[#BF953F] rounded-xl px-4 py-4 text-white focus:outline-none focus:shadow-[0_0_10px_rgba(191,149,63,0.2)] transition text-lg tracking-widest">
+                </div>
+            </div>
+            
+            <button onclick="submitForm('vip')" class="w-full bg-gray-900 border border-[#BF953F] text-[#FCF6BA] font-extrabold py-4 rounded-xl mt-8 shadow-lg text-lg hover:bg-gray-800 transition">
+                אמת והמשך לגירוד
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: CUSTOMER SCRATCH CARD              -->
+    <!-- ========================================== -->
+    <div id="view-customer" class="view-section py-10 bg-[radial-gradient(circle_at_center,#1f1f2e_0%,#0a0a0a_100%)]">
         <header class="text-center mb-6 px-4 w-full max-w-md mx-auto">
             <div class="inline-block p-1 rounded-full gold-bg mb-4 shadow-[0_0_15px_rgba(191,149,63,0.4)]">
-                <div class="bg-black text-[#FCF6BA] px-6 py-1 rounded-full text-sm font-bold tracking-widest uppercase">
+                <div id="user-badge" class="bg-black text-[#FCF6BA] px-6 py-1 rounded-full text-sm font-bold tracking-widest uppercase">
                     VIP Member
                 </div>
             </div>
             <h1 class="text-5xl font-black mb-2 tracking-wider">
                 DIAMOND<span class="gold-text">BALL</span>
             </h1>
-            <p class="text-gray-400 text-lg">מועדון הלקוחות האקסקלוסיבי</p>
+            <p id="welcome-name" class="text-gray-400 text-lg">שיהיה בהצלחה!</p>
         </header>
 
         <main class="flex-grow flex items-center justify-center w-full px-4">
@@ -125,62 +214,54 @@
                 </div>
             </div>
         </main>
-
-        <footer class="mt-8 px-6 w-full text-center pb-4">
-            <button onclick="openAdminLogin()" class="opacity-30 hover:opacity-100 transition-opacity p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-            </button>
-        </footer>
     </div>
 
     <!-- ========================================== -->
-    <!-- VIEW 2: ADMIN DASHBOARD                    -->
+    <!-- VIEW 5: ADMIN DASHBOARD                    -->
     <!-- ========================================== -->
     <div id="view-admin" class="view-section py-8 px-4 bg-gray-950">
-        <div class="max-w-4xl mx-auto w-full">
+        <div class="max-w-5xl mx-auto w-full">
             <header class="flex justify-between items-center mb-8 border-b border-gray-800 pb-4">
                 <div>
                     <h1 class="text-3xl font-black text-white">פאנל ניהול פרסים</h1>
                     <p class="text-[#BF953F]">מערכת שליטה - DIAMOND BALL</p>
                 </div>
-                <button onclick="switchView('customer')" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">
-                    חזור לכרטיס
+                <button onclick="switchView('welcome')" class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                    יציאה
                 </button>
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Live Feed Panel (Moved to left/primary spot for data focus) -->
+                <div class="glass-panel rounded-2xl p-6 flex flex-col h-[550px]">
+                    <h2 class="text-xl font-bold text-white mb-4">זכיות ונתוני לקוחות</h2>
+                    <div id="wins-feed" class="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
                 <!-- Inventory Panel -->
-                <div class="md:col-span-2 glass-panel rounded-2xl p-6">
+                <div class="md:col-span-2 glass-panel rounded-2xl p-6 h-[550px] flex flex-col">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-bold text-white">מלאי פרסים (זמן אמת)</h2>
                         <button onclick="resetInventory()" class="text-sm border border-[#BF953F] text-[#FCF6BA] px-3 py-1.5 rounded hover:bg-[#BF953F] hover:text-black transition">
                             אפס מלאי לברירת מחדל
                         </button>
                     </div>
-                    <div class="overflow-x-auto">
+                    <div class="overflow-y-auto flex-1 pr-2 custom-scrollbar">
                         <table class="w-full text-right border-collapse">
                             <thead>
                                 <tr class="border-b border-gray-700 text-gray-400 text-sm">
-                                    <th class="pb-3 pr-2">פרס</th>
-                                    <th class="pb-3 text-center">הוגדר מראש</th>
-                                    <th class="pb-3 text-center">נותרו לחלוקה</th>
-                                    <th class="pb-3 text-center">סוג</th>
+                                    <th class="pb-3 pr-2 sticky top-0 bg-gray-900/90 backdrop-blur-sm">פרס</th>
+                                    <th class="pb-3 text-center sticky top-0 bg-gray-900/90 backdrop-blur-sm">הוגדר מראש</th>
+                                    <th class="pb-3 text-center sticky top-0 bg-gray-900/90 backdrop-blur-sm">נותרו</th>
+                                    <th class="pb-3 text-center sticky top-0 bg-gray-900/90 backdrop-blur-sm">סוג</th>
                                 </tr>
                             </thead>
                             <tbody id="inventory-table-body">
                                 <!-- Populated by JS -->
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <!-- Live Feed Panel -->
-                <div class="glass-panel rounded-2xl p-6 flex flex-col h-[500px]">
-                    <h2 class="text-xl font-bold text-white mb-4">זכיות אחרונות</h2>
-                    <div id="wins-feed" class="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
-                        <!-- Populated by JS -->
                     </div>
                 </div>
             </div>
@@ -246,61 +327,54 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Handle environment config or use user's provided config
         const firebaseConfig = {
             apiKey: "AIzaSyAI5afkXTnjJHZrgvCZHFDKHi-IMpABMWQ",
             authDomain: "scratch-db463.firebaseapp.com",
             projectId: "scratch-db463",
             storageBucket: "scratch-db463.firebasestorage.app",
             messagingSenderId: "271029079626",
-            appId: "1:271029079626:web:a7e27c2989c2baab89a0b3",
-            measurementId: "G-HTCR679ZFN"
+            appId: "1:271029079626:web:a7e27c2989c2baab89a0b3"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         
-        // Strict Path Management per system rules
         const APP_ID = 'diamond-ball-vip-v1';
         let currentUserId = null;
 
-        // DB References (Public data for the app ecosystem)
         const PRIZES_COLLECTION = collection(db, 'artifacts', APP_ID, 'public', 'data', 'prizes');
         const WINS_COLLECTION = collection(db, 'artifacts', APP_ID, 'public', 'data', 'wins');
 
         // State variables
-        let availablePrizes = [];
         let allocatedPrizeForUser = null;
         let isDrawing = false;
         let isRevealed = false;
         let currentWinDocId = null; 
         
-        // Canvas setup
+        // שמירת פרטי הלקוח שהזין בטופס
+        let currentCustomer = {
+            name: '',
+            phone: '',
+            type: '' // 'מועדון' או 'VIP'
+        };
+        
         const canvas = document.getElementById('scratch-canvas');
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         const container = document.getElementById('scratch-container');
         const brushSize = 30;
 
         // ==========================================
-        // INITIALIZATION & AUTH
+        // INITIALIZATION
         // ==========================================
         async function initApp() {
             try {
-                // Auth Before Queries
                 const userCredential = await signInAnonymously(auth);
                 currentUserId = userCredential.user.uid;
                 
-                // Check if database needs initial seeding
                 await checkAndSeedDatabase();
-                
-                // Start Admin Listeners
                 startAdminListeners();
                 
-                // Prepare the customer scratch card
-                await prepareScratchCard();
-                
-                // Hide loading screen
                 document.getElementById('loading-screen').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('loading-screen').style.display = 'none';
@@ -309,23 +383,66 @@
             } catch (error) {
                 console.error("Initialization error:", error);
                 document.getElementById('loading-screen').style.display = 'none';
-                // כאן התיקון: נציג את השגיאה המדויקת באנגלית כדי לדעת למה נחסמנו
                 showAlert("Firebase Error: " + error.message);
             }
         }
+
+        // ==========================================
+        // FORM SUBMISSION LOGIC
+        // ==========================================
+        window.submitForm = async function(formType) {
+            if (formType === 'club') {
+                const name = document.getElementById('reg-name').value.trim();
+                const phone = document.getElementById('reg-phone').value.trim();
+                
+                if (!name || !phone) return showAlert("אנא מלא את כל השדות כדי להמשיך.");
+                if (phone.length < 9) return showAlert("מספר טלפון לא תקין.");
+                
+                currentCustomer = { name: name, phone: phone, type: 'מועדון' };
+                document.getElementById('welcome-name').innerText = `בהצלחה, ${name.split(' ')[0]}!`;
+                document.getElementById('user-badge').innerText = "CLUB MEMBER";
+                
+            } else if (formType === 'vip') {
+                const phone = document.getElementById('vip-phone').value.trim();
+                
+                if (!phone) return showAlert("אנא הזן מספר טלפון כדי לאמת את החשבון.");
+                if (phone.length < 9) return showAlert("מספר טלפון לא תקין.");
+                
+                currentCustomer = { name: 'לקוח VIP', phone: phone, type: 'VIP' };
+                document.getElementById('welcome-name').innerText = `שמחים שחזרת אלינו!`;
+                document.getElementById('user-badge').innerText = "VIP MEMBER";
+            }
+
+            // מציג מסך טעינה בזמן שמכין את הכרטיס
+            const loading = document.getElementById('loading-screen');
+            loading.querySelector('p').innerText = "מכין כרטיס אישי...";
+            loading.style.display = 'flex';
+            loading.style.opacity = '1';
+            
+            await prepareScratchCard();
+            
+            // עובר למסך הגירוד
+            switchView('customer');
+            
+            loading.style.opacity = '0';
+            setTimeout(() => loading.style.display = 'none', 500);
+        };
 
         // ==========================================
         // DATABASE LOGIC (Prizes & Inventory)
         // ==========================================
         const defaultPrizes = [
             { id: "grand", name: "ארוחת ערב זוגית", initialQty: 2, remaining: 2, type: "VIP" },
-            { id: "champagne", name: "בקבוק שמפניה מובחר", initialQty: 3, remaining: 3, type: "VIP" },
-            { id: "table", name: "שדרוג לשולחן VIP", initialQty: 5, remaining: 5, type: "High" },
+            { id: "champagne", name: "בקבוק שמפניה", initialQty: 3, remaining: 3, type: "VIP" },
+            { id: "table", name: "שדרוג שולחן VIP", initialQty: 5, remaining: 5, type: "High" },
             { id: "entry", name: "כניסה חינם למסיבה", initialQty: 20, remaining: 20, type: "Medium" },
             { id: "burger", name: "המבורגר מתנה", initialQty: 15, remaining: 15, type: "Medium" },
+            { id: "game", name: "משחק שולחן (סנוקר/באולינג)", initialQty: 20, remaining: 20, type: "Medium" }, // פרס חדש
             { id: "cocktail", name: "קוקטייל הבית מתנה", initialQty: 30, remaining: 30, type: "Medium" },
+            { id: "beer", name: "כוס בירה מהחבית", initialQty: 40, remaining: 40, type: "Normal" }, // פרס חדש
             { id: "chaser", name: "צ'ייסר הבית מתנה", initialQty: 50, remaining: 50, type: "Normal" },
             { id: "discount", name: "10% הנחה בחשבון", initialQty: 100, remaining: 100, type: "Normal" },
+            { id: "softdrink", name: "פחית שתייה קלה", initialQty: 100, remaining: 100, type: "Normal" }, // פרס חדש
             { id: "energy", name: "פחית אקסל מתנה", initialQty: 150, remaining: 150, type: "Normal" }
         ];
 
@@ -344,7 +461,6 @@
             isRevealed = false;
             allocatedPrizeForUser = null;
             
-            // 1. Fetch available inventory
             const snapshot = await getDocs(PRIZES_COLLECTION);
             const allPrizes = [];
             snapshot.forEach(doc => {
@@ -356,18 +472,15 @@
                 }
             });
 
-            // 2. Select a prize
             if (allPrizes.length === 0) {
-                allocatedPrizeForUser = { id: 'none', name: 'הפעם לא זכית, נסה מחר!' };
+                allocatedPrizeForUser = { id: 'none', name: 'הפעם לא זכית, נסה שוב מחר!' };
             } else {
                 const randomIndex = Math.floor(Math.random() * allPrizes.length);
                 allocatedPrizeForUser = allPrizes[randomIndex];
             }
 
-            // 3. Set DOM
             document.getElementById('prize-content').innerText = allocatedPrizeForUser.name;
             
-            // 4. Setup Canvas UI
             canvas.style.opacity = '1';
             canvas.style.pointerEvents = 'auto';
             canvas.style.transition = 'none';
@@ -387,12 +500,16 @@
                     });
                 }
 
+                // רישום הלקוח יחד עם הזכייה!
                 const docRef = await addDoc(WINS_COLLECTION, {
                     prizeName: allocatedPrizeForUser.name,
                     prizeId: allocatedPrizeForUser.id,
                     timestamp: Date.now(),
                     userId: currentUserId,
-                    status: 'pending_claim'
+                    status: 'pending_claim',
+                    customerName: currentCustomer.name,
+                    customerPhone: currentCustomer.phone,
+                    customerType: currentCustomer.type
                 });
                 
                 currentWinDocId = docRef.id;
@@ -542,20 +659,17 @@
                     }
                 }
 
-                showAlert("הפרס סופק בהצלחה! מכין כרטיס חדש...");
+                showAlert("הפרס סופק בהצלחה! תודה ששיחקת.");
                 
-                setTimeout(async () => {
+                // חוזר למסך הבית הראשי במקום להכין כרטיס חדש ישר (כי זה לקוח חדש שצריך להירשם)
+                setTimeout(() => {
                     closeModal('alert-modal');
-                    const loading = document.getElementById('loading-screen');
-                    loading.style.display = 'flex';
-                    loading.style.opacity = '1';
-                    loading.querySelector('p').innerText = "מכין כרטיס חדש...";
-                    
-                    await prepareScratchCard();
-                    
-                    loading.style.opacity = '0';
-                    setTimeout(() => loading.style.display = 'none', 500);
+                    switchView('welcome');
+                    document.getElementById('reg-name').value = '';
+                    document.getElementById('reg-phone').value = '';
+                    document.getElementById('vip-phone').value = '';
                 }, 2000);
+                
             } else {
                 showAlert("קוד ברמן שגוי.");
             }
@@ -588,7 +702,7 @@
                                 ${item.remaining}
                             </span>
                         </td>
-                        <td class="py-3 text-center text-xs text-gray-500">${item.type}</td>
+                        <td class="py-3 text-center text-xs text-gray-500 hidden sm:table-cell">${item.type}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -608,25 +722,35 @@
                     return;
                 }
 
-                wins.slice(0, 20).forEach(win => {
+                wins.slice(0, 50).forEach(win => {
                     const date = new Date(win.timestamp);
                     const timeString = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
                     
                     const statusBadge = win.status === 'claimed' 
-                        ? '<span class="text-green-400 text-[10px] bg-green-900/30 px-1.5 py-0.5 rounded ml-2">מומש</span>'
-                        : '<span class="text-yellow-400 text-[10px] bg-yellow-900/30 px-1.5 py-0.5 rounded ml-2">ממתין לברמן</span>';
+                        ? '<span class="text-green-400 text-[10px] bg-green-900/30 px-1.5 py-0.5 rounded ml-2 border border-green-800">מומש</span>'
+                        : '<span class="text-yellow-400 text-[10px] bg-yellow-900/30 px-1.5 py-0.5 rounded ml-2 border border-yellow-800">ממתין לברמן</span>';
                     
+                    const typeBadge = win.customerType === 'מועדון'
+                        ? '<span class="text-blue-400 text-[10px] bg-blue-900/30 px-1.5 py-0.5 rounded ml-1">מועדון</span>'
+                        : (win.customerType === 'VIP' ? '<span class="text-purple-400 text-[10px] bg-purple-900/30 px-1.5 py-0.5 rounded ml-1">VIP</span>' : '');
+
+                    // מזהה לקוח מדויק
+                    const customerDisplay = win.customerPhone ? `${win.customerName} (${win.customerPhone})` : 'לקוח אנונימי (ישן)';
+
                     const div = document.createElement('div');
-                    div.className = "bg-black/40 border border-gray-800 rounded-lg p-3 flex justify-between items-center";
+                    div.className = "bg-black/60 border border-gray-800 rounded-lg p-3 flex justify-between items-center hover:border-gray-600 transition";
                     div.innerHTML = `
                         <div class="flex flex-col">
-                            <div class="flex items-center">
+                            <div class="flex items-center mb-1">
                                 <span class="text-[#FCF6BA] font-bold text-sm">${win.prizeName}</span>
                                 ${statusBadge}
                             </div>
-                            <span class="text-gray-500 text-xs mt-1">לקוח אנונימי</span>
+                            <div class="flex items-center">
+                                <span class="text-gray-400 text-xs">${customerDisplay}</span>
+                                ${typeBadge}
+                            </div>
                         </div>
-                        <span class="text-gray-400 text-xs">${timeString}</span>
+                        <span class="text-gray-500 text-xs font-mono bg-gray-900 px-2 py-1 rounded">${timeString}</span>
                     `;
                     feed.appendChild(div);
                 });
@@ -634,13 +758,13 @@
         }
 
         window.resetInventory = async function() {
-            if (confirm("האם אתה בטוח שברצונך לאפס את כל המלאי בחזרה לברירת המחדל?")) {
+            if (confirm("האם אתה בטוח שברצונך לאפס את כל המלאי בחזרה לברירת המחדל? פעולה זו אינה הפיכה.")) {
                 showAlert("מאפס מלאי...");
                 for (const prize of defaultPrizes) {
                     const docRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', prize.id);
                     await setDoc(docRef, prize);
                 }
-                showAlert("המלאי אופס בהצלחה!");
+                showAlert("המלאי אופס בהצלחה! מתחילים ערב חדש.");
             }
         };
 
@@ -650,6 +774,7 @@
         window.switchView = function(viewName) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + viewName).classList.add('active');
+            window.scrollTo(0, 0);
         };
 
         window.openAdminLogin = function() {
@@ -669,7 +794,7 @@
                 closeModal('admin-login-modal');
                 switchView('admin');
             } else {
-                showAlert("סיסמה שגויה.");
+                showAlert("סיסמה שגויה גישה נדחתה.");
             }
         };
 
@@ -691,7 +816,7 @@
         canvas.addEventListener('touchend', handleScratchEnd);
 
         window.addEventListener('resize', () => {
-            if (!isRevealed) resizeCanvas();
+            if (!isRevealed && document.getElementById('view-customer').classList.contains('active')) resizeCanvas();
         });
 
         window.onload = initApp;
