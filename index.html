@@ -252,9 +252,14 @@
                 <div class="md:col-span-2 glass-panel rounded-2xl p-6 h-[550px] flex flex-col">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-bold text-white">מלאי פרסים (זמן אמת)</h2>
-                        <button onclick="resetInventory()" class="text-sm border border-[#BF953F] text-[#FCF6BA] px-3 py-1.5 rounded hover:bg-[#BF953F] hover:text-black transition">
-                            אפס מלאי לברירת מחדל
-                        </button>
+                        <div class="flex space-x-2 space-x-reverse">
+                            <button onclick="openPrizeModal()" class="text-sm bg-[#BF953F] text-black font-bold px-3 py-1.5 rounded hover:bg-[#AA771C] transition shadow-[0_0_10px_rgba(191,149,63,0.3)]">
+                                + הוסף פרס
+                            </button>
+                            <button onclick="resetInventory()" class="text-sm border border-[#BF953F] text-[#FCF6BA] px-3 py-1.5 rounded hover:bg-[#BF953F] hover:text-black transition">
+                                אפס מלאי 
+                            </button>
+                        </div>
                     </div>
                     <div class="overflow-y-auto flex-1 pr-2 custom-scrollbar">
                         <table class="w-full text-right border-collapse">
@@ -263,7 +268,8 @@
                                     <th class="pb-3 pr-2 sticky top-0 bg-gray-900/90 backdrop-blur-sm">פרס</th>
                                     <th class="pb-3 text-center sticky top-0 bg-gray-900/90 backdrop-blur-sm">הוגדר מראש</th>
                                     <th class="pb-3 text-center sticky top-0 bg-gray-900/90 backdrop-blur-sm">נותרו</th>
-                                    <th class="pb-3 text-center sticky top-0 bg-gray-900/90 backdrop-blur-sm">סוג</th>
+                                    <th class="pb-3 text-center sticky top-0 bg-gray-900/90 backdrop-blur-sm hidden sm:table-cell">סוג</th>
+                                    <th class="pb-3 text-center sticky top-0 bg-gray-900/90 backdrop-blur-sm">פעולות</th>
                                 </tr>
                             </thead>
                             <tbody id="inventory-table-body">
@@ -329,10 +335,49 @@
         </div>
     </div>
 
+    <!-- Prize Management Modal -->
+    <div id="prize-modal" class="hidden fixed inset-0 z-[120] items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+        <div class="glass-panel rounded-2xl p-6 max-w-sm w-full border border-[#BF953F]">
+            <h3 id="prize-modal-title" class="text-2xl font-bold text-white mb-4 text-center">הוספת פרס חדש</h3>
+            <input type="hidden" id="prize-id">
+            
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-gray-400 text-xs mb-1 ml-1">שם הפרס (למשל: פחית אקסל)</label>
+                    <input type="text" id="prize-name" class="w-full bg-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#BF953F]" placeholder="לדוגמה: פחית אקסל מתנה">
+                </div>
+                <div class="flex space-x-3 space-x-reverse">
+                    <div class="flex-1">
+                        <label class="block text-gray-400 text-xs mb-1 ml-1">מלאי כולל</label>
+                        <input type="number" id="prize-initial" class="w-full bg-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#BF953F]" value="10">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-gray-400 text-xs mb-1 ml-1">מלאי שנותר</label>
+                        <input type="number" id="prize-remaining" class="w-full bg-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#BF953F]" value="10">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-xs mb-1 ml-1">נדירות (קובע את צבע התגית)</label>
+                    <select id="prize-type" class="w-full bg-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#BF953F]">
+                        <option value="Normal">רגיל (Normal)</option>
+                        <option value="Medium">בינוני (Medium)</option>
+                        <option value="High">גבוה (High)</option>
+                        <option value="VIP">נדיר מאוד (VIP)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="flex space-x-3 space-x-reverse">
+                <button onclick="savePrize()" class="flex-1 gold-bg text-black font-bold py-2.5 rounded-lg shadow-lg hover:scale-105 transition">שמור פרס</button>
+                <button onclick="closeModal('prize-modal')" class="flex-1 bg-gray-800 text-white font-bold py-2.5 rounded-lg hover:bg-gray-700 transition">ביטול</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, onSnapshot, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAI5afkXTnjJHZrgvCZHFDKHi-IMpABMWQ",
@@ -365,6 +410,8 @@
             phone: '',
             type: '' 
         };
+        
+        window.currentInventory = []; // משתנה לשמירת המלאי לצורך עריכה
         
         const canvas = document.getElementById('scratch-canvas');
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -737,6 +784,7 @@
                 snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
                 
                 items.sort((a, b) => a.initialQty - b.initialQty);
+                window.currentInventory = items; // שומרים את הרשימה המעודכנת
 
                 items.forEach(item => {
                     const percentage = Math.round((item.remaining / item.initialQty) * 100);
@@ -753,6 +801,10 @@
                             </span>
                         </td>
                         <td class="py-3 text-center text-xs text-gray-500 hidden sm:table-cell">${item.type}</td>
+                        <td class="py-3 text-center text-lg">
+                            <button onclick="openPrizeModal('${item.id}')" class="mx-1 hover:scale-110 transition" title="ערוך פרס">✏️</button>
+                            <button onclick="deletePrize('${item.id}')" class="mx-1 hover:scale-110 transition opacity-80" title="מחק פרס">🗑️</button>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -851,6 +903,86 @@
                 alertCallback = null;
             }
         };
+
+        // --- Prize Management Functions ---
+        window.openPrizeModal = function(id = null) {
+            const modal = document.getElementById('prize-modal');
+            const title = document.getElementById('prize-modal-title');
+            
+            if (id) {
+                // מצב עריכה
+                title.innerText = 'עריכת פרס קיים';
+                const prize = window.currentInventory.find(p => p.id === id);
+                if (prize) {
+                    document.getElementById('prize-id').value = prize.id;
+                    document.getElementById('prize-name').value = prize.name;
+                    document.getElementById('prize-initial').value = prize.initialQty;
+                    document.getElementById('prize-remaining').value = prize.remaining;
+                    document.getElementById('prize-type').value = prize.type || 'Normal';
+                }
+            } else {
+                // מצב הוספה
+                title.innerText = 'הוספת פרס חדש';
+                document.getElementById('prize-id').value = '';
+                document.getElementById('prize-name').value = '';
+                document.getElementById('prize-initial').value = '20';
+                document.getElementById('prize-remaining').value = '20';
+                document.getElementById('prize-type').value = 'Normal';
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+
+        window.savePrize = async function() {
+            const id = document.getElementById('prize-id').value;
+            const name = document.getElementById('prize-name').value.trim();
+            const initialQty = parseInt(document.getElementById('prize-initial').value);
+            const remaining = parseInt(document.getElementById('prize-remaining').value);
+            const type = document.getElementById('prize-type').value;
+            
+            if (!name) return showAlert("יש להזין שם לפרס לפני השמירה.");
+            
+            try {
+                const prizeData = {
+                    name: name,
+                    initialQty: isNaN(initialQty) ? 0 : initialQty,
+                    remaining: isNaN(remaining) ? 0 : remaining,
+                    type: type
+                };
+                
+                if (id) {
+                    // עדכון קיים
+                    const docRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', id);
+                    await updateDoc(docRef, prizeData);
+                    showAlert("הפרס עודכן בהצלחה במערכת.");
+                } else {
+                    // הוספת חדש
+                    const newId = 'prize_' + Date.now();
+                    const docRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', newId);
+                    await setDoc(docRef, { id: newId, ...prizeData });
+                    showAlert("הפרס החדש נוסף בהצלחה למלאי.");
+                }
+                closeModal('prize-modal');
+            } catch (error) {
+                console.error("Error saving prize:", error);
+                showAlert("אירעה שגיאה בשמירת הפרס: " + error.message);
+            }
+        };
+
+        window.deletePrize = async function(id) {
+            if (confirm("האם אתה בטוח שברצונך למחוק פרס זה לחלוטין? לקוחות לא יוכלו לזכות בו יותר.")) {
+                try {
+                    const docRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'prizes', id);
+                    await deleteDoc(docRef);
+                    // אין צורך בהתראה, הטבלה תתרענן אוטומטית כי אנחנו מאזינים למסד הנתונים
+                } catch (error) {
+                    console.error("Error deleting prize:", error);
+                    showAlert("אירעה שגיאה במחיקת הפרס.");
+                }
+            }
+        };
+        // ----------------------------------
 
         window.verifyAdmin = function() {
             const pin = document.getElementById('admin-pin').value;
